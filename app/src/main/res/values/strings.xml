@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Messenger</string>
+    <string name="ivan_ivanov_gmail_com">Ivan.Ivanov@gmail.com</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="log_in">Log in</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="sign_in">Sign in</string>
 </resources>
