@@ -10,4 +10,8 @@
     <string name="sign_up">Sign up</string>
     <string name="set_new_password">Set new password</string>
     <string name="send_me_reset_password_instructions">Send me reset password instructions</string>
+    <string name="your_name">your name</string>
+    <string name="your_last_name">your last name</string>
+    <string name="your_age">your age</string>
+    <string name="registration">Registration</string>
 </resources>

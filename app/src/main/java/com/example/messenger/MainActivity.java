@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         textViewToRegisterActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Launch intent to register activity
+                startActivity(RegisterActivity.newIntent(MainActivity.this));
             }
         });
     }
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
-                            //Launch intent to users activity
+                            //launch intent to user activity
                             Log.d(TAG, "success sign in");
                         }
                     })
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         buttonSendLogInData = findViewById(R.id.ButtonSendLogInData);
 
         textViewIfForgotPassword = findViewById(R.id.TextViewForgotPassword);
-        textViewToRegisterActivity = findViewById(R.id.TextViewSignIn);
+        textViewToRegisterActivity = findViewById(R.id.TextViewSignUp);
 
         mAuth = FirebaseAuth.getInstance();
     }

@@ -59,6 +59,7 @@
             android:autofillHints="emailAddress"
             android:backgroundTint="@color/white"
             android:hint="@string/email"
+            android:inputType="textEmailAddress"
             android:maxLines="1"
             android:textColor="@color/white"
             android:textColorHint="#ABABAB"
@@ -72,6 +73,7 @@
             android:autofillHints="password"
             android:backgroundTint="@color/white"
             android:hint="@string/password"
+            android:inputType="textPassword"
             android:maxLines="1"
             android:textColor="@color/white"
             android:textColorHint="#ABABAB"
@@ -97,7 +99,7 @@
             app:layout_constraintTop_toBottomOf="@+id/ButtonSendLogInData" />
 
         <TextView
-            android:id="@+id/TextViewSignIn"
+            android:id="@+id/TextViewSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="3dp"
