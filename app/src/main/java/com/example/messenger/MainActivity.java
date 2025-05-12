@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         textViewIfForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Launch intent to forgot password activity
+                startActivity(ForgotPasswordActivity.newIntent(MainActivity.this));
             }
         });
 
@@ -91,39 +91,6 @@ public class MainActivity extends AppCompatActivity {
                     });
         }
     }
-
-//    public void IfForgotPasswordResetIt(String email){
-//        if (email.isEmpty()) {
-//            Toast.makeText(
-//                    MainActivity.this,
-//                    "Email can't be blank",
-//                    Toast.LENGTH_SHORT
-//            ).show();
-//        }else {
-//            mAuth.sendPasswordResetEmail(email)
-//                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void unused) {
-//                            Toast.makeText(
-//                                    MainActivity.this,
-//                                    "reset password was sent on your email",
-//                                    Toast.LENGTH_LONG
-//                            ).show();
-//                            Log.d(TAG, "reset password was sent");
-//                        }
-//                    })
-//                    .addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            Toast.makeText(
-//                                    MainActivity.this,
-//                                    e.getMessage(),
-//                                    Toast.LENGTH_LONG
-//                            ).show();
-//                        }
-//                    });
-//        }
-//    }
 
     public void initViews(){
         editTextEmail = findViewById(R.id.EditTextEmail);
