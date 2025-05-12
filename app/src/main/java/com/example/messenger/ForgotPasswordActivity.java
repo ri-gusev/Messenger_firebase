@@ -62,7 +62,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                                     "reset password was sent on your email",
                                     Toast.LENGTH_LONG
                             ).show();
-                            Log.d(TAG, "reset password was sent");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
