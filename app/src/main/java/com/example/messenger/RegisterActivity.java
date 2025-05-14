@@ -35,10 +35,13 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
         initViews();
+        // set observers
+        setOnClickListeners();
+    }
 
+    private void setOnClickListeners(){
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,7 +60,9 @@ public class RegisterActivity extends AppCompatActivity {
                     ).show();
                 } else {
                     createNewUserWithEmailAndPassword(email, password);
-                    //launch intent to user activity
+                    Intent intent = UsersActivity.newIntent(RegisterActivity.this,
+                            name, lastName, age);
+                    startActivity(intent);
                 }
             }
         });

@@ -1,5 +1,7 @@
 package com.example.messenger;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -34,11 +36,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         initViews();
+        //set observers
+        setOnClickListeners();
+    }
 
+    private void setOnClickListeners(){
         buttonSendLogInData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
-                            //launch intent to user activity
                             Log.d(TAG, "success sign in");
+                            startActivity(UsersActivity.newIntent(MainActivity.this));
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
