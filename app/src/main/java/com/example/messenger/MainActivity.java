@@ -13,11 +13,16 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,9 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewIfForgotPassword;
     private TextView textViewToRegisterActivity;
 
-    private FirebaseAuth mAuth;
-
-    private static final String TAG = "MainActivity";
+    private MainViewModel mainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,17 +42,47 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initViews();
-        //set observers
+        setObservers();
         setOnClickListeners();
     }
 
-    private void setOnClickListeners(){
+    private void setObservers(){
+        mainViewModel.getUser().observe(this, new Observer<FirebaseUser>() {
+            @Override
+            public void onChanged(FirebaseUser firebaseUser) {
+                if (firebaseUser != null){
+                    startActivity(UsersActivity.newIntent(MainActivity.this));
+                }
+            }
+        });
+
+        mainViewModel.getFailureMessage().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String message) {
+                Toast.makeText(
+                        MainActivity.this,
+                        message,
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
+    }
+
+    private void setOnClickListeners() {
         buttonSendLogInData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = String.valueOf(editTextEmail.getText()).trim();
                 String password = String.valueOf(editTextPassword.getText()).trim();
-                SignInUser(email, password);
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(
+                            MainActivity.this,
+                            "Email or password can't be blank",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                } else {
+                    mainViewModel.SignInUser(email, password);
+                }
             }
         });
 
@@ -68,36 +101,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void SignInUser(String email, String password){
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(
-                    MainActivity.this,
-                    "Email or password can't be blank",
-                    Toast.LENGTH_SHORT
-            ).show();
-        }else {
-            mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                        @Override
-                        public void onSuccess(AuthResult authResult) {
-                            Log.d(TAG, "success sign in");
-                            startActivity(UsersActivity.newIntent(MainActivity.this));
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(
-                                    MainActivity.this,
-                                    e.getMessage(),
-                                    Toast.LENGTH_LONG
-                            ).show();
-                        }
-                    });
-        }
-    }
-
-    public void initViews(){
+    public void initViews() {
         editTextEmail = findViewById(R.id.EditTextEmail);
         editTextPassword = findViewById(R.id.EditTextPassword);
 
@@ -106,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         textViewIfForgotPassword = findViewById(R.id.TextViewForgotPassword);
         textViewToRegisterActivity = findViewById(R.id.TextViewSignUp);
 
-        mAuth = FirebaseAuth.getInstance();
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
     }
 }
