@@ -3,19 +3,15 @@ package com.example.messenger;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -28,27 +24,54 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Button buttonSignUp;
 
-    private static final String TAG = "RegisterActivity";
-    private FirebaseAuth mAuth;
+    private RegisterViewModel viewModel;
+
+    private String name;
+    private String lastName;
+    private String age;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
         initViews();
-        // set observers
+        setObservers();
         setOnClickListeners();
     }
 
-    private void setOnClickListeners(){
+    private void setObservers() {
+        viewModel.getIsUserCreated().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean isCreated) {
+                if (isCreated){
+                    initUserDataValues();
+                    Intent intent = UsersActivity.newIntent(RegisterActivity.this,
+                            name, lastName, age);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        viewModel.getErrorMessage().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String error) {
+                Toast.makeText(
+                        RegisterActivity.this,
+                        error,
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
+    }
+
+    private void setOnClickListeners() {
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = editTextEmailRegister.getText().toString().trim();
                 String password = editTextPasswordRegister.getText().toString().trim();
-                String name = editTextName.getText().toString().trim();
-                String lastName = editTextLastName.getText().toString().trim();
-                String age = editTextAge.getText().toString().trim();
+                initUserDataValues();
                 if (email.isEmpty() || password.isEmpty() ||
                         name.isEmpty() || lastName.isEmpty() ||
                         age.isEmpty()) {
@@ -58,39 +81,21 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT
                     ).show();
                 } else {
-                    createNewUserWithEmailAndPassword(email, password);
-                    Intent intent = UsersActivity.newIntent(RegisterActivity.this,
-                            name, lastName, age);
-                    startActivity(intent);
+                    viewModel.createNewUserWithEmailAndPassword(email, password);
                 }
             }
         });
-    }
-
-    private void createNewUserWithEmailAndPassword(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        Log.d(TAG, "success sign up");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(
-                                RegisterActivity.this,
-                                e.getMessage(),
-                                Toast.LENGTH_SHORT
-                        ).show();
-                    }
-                });
     }
 
     public static Intent newIntent(Context context) {
         return new Intent(context, RegisterActivity.class);
     }
 
+    private void initUserDataValues(){
+        name = editTextName.getText().toString().trim();
+        lastName = editTextLastName.getText().toString().trim();
+        age = editTextAge.getText().toString().trim();
+    }
 
     public void initViews() {
         editTextName = findViewById(R.id.EditTextName);
@@ -101,6 +106,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         buttonSignUp = findViewById(R.id.ButtonSignUp);
 
-        mAuth = FirebaseAuth.getInstance();
+        viewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
     }
 }
