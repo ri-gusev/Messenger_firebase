@@ -1,10 +1,5 @@
 package com.example.messenger;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
-import android.util.Log;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
