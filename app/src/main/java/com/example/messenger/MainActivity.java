@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             public void onChanged(FirebaseUser firebaseUser) {
                 if (firebaseUser != null){
                     startActivity(UsersActivity.newIntent(MainActivity.this));
+                    finish();
                 }
             }
         });
@@ -48,11 +49,13 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.getFailureMessage().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String message) {
-                Toast.makeText(
-                        MainActivity.this,
-                        message,
-                        Toast.LENGTH_SHORT
-                ).show();
+                if (message != null){
+                    Toast.makeText(
+                            MainActivity.this,
+                            message,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
             }
         });
     }

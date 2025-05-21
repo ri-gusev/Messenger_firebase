@@ -21,6 +21,14 @@ public class MainViewModel extends ViewModel {
 
     public MainViewModel() {
         mAuth = FirebaseAuth.getInstance();
+        mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() != null){
+                    user.setValue(firebaseAuth.getCurrentUser());
+                }
+            }
+        });
     }
 
     public LiveData<FirebaseUser> getUser() {
@@ -36,7 +44,6 @@ public class MainViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        user.setValue(authResult.getUser());
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
