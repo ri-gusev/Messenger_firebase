@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.auth.FirebaseUser;
+
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -26,10 +28,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private RegisterViewModel viewModel;
 
-    private String name;
-    private String lastName;
-    private String age;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,14 +39,13 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setObservers() {
-        viewModel.getIsUserCreated().observe(this, new Observer<Boolean>() {
+        viewModel.getIsUserCreated().observe(this, new Observer<FirebaseUser>() {
             @Override
-            public void onChanged(Boolean isCreated) {
-                if (isCreated){
-                    initUserDataValues();
-                    Intent intent = UsersActivity.newIntent(RegisterActivity.this,
-                            name, lastName, age);
+            public void onChanged(FirebaseUser firebaseUser) {
+                if (firebaseUser != null){
+                    Intent intent = UsersActivity.newIntent(RegisterActivity.this);
                     startActivity(intent);
+                    finish();
                 }
             }
         });
@@ -69,9 +66,11 @@ public class RegisterActivity extends AppCompatActivity {
         buttonSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = editTextEmailRegister.getText().toString().trim();
-                String password = editTextPasswordRegister.getText().toString().trim();
-                initUserDataValues();
+                String email = trimString(editTextEmailRegister);
+                String password = trimString(editTextPasswordRegister);
+                String name = trimString(editTextName);
+                String lastName = trimString(editTextLastName);
+                String age = trimString(editTextAge);
                 if (email.isEmpty() || password.isEmpty() ||
                         name.isEmpty() || lastName.isEmpty() ||
                         age.isEmpty()) {
@@ -81,20 +80,18 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT
                     ).show();
                 } else {
-                    viewModel.createNewUserWithEmailAndPassword(email, password);
+                    viewModel.createNewUserWithEmailAndPassword(email, password, name, lastName, age);
                 }
             }
         });
     }
 
-    public static Intent newIntent(Context context) {
-        return new Intent(context, RegisterActivity.class);
+    private String trimString(EditText editText){
+        return editText.getText().toString().trim();
     }
 
-    private void initUserDataValues(){
-        name = editTextName.getText().toString().trim();
-        lastName = editTextLastName.getText().toString().trim();
-        age = editTextAge.getText().toString().trim();
+    public static Intent newIntent(Context context) {
+        return new Intent(context, RegisterActivity.class);
     }
 
     public void initViews() {

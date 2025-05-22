@@ -2,7 +2,6 @@ package com.example.messenger;
 
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.usb.UsbRequest;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class UsersActivity extends AppCompatActivity {
