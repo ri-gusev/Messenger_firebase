@@ -40,7 +40,6 @@ public class ForgotPasswordViewModel extends ViewModel {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         errorMessage.setValue(e.getMessage());
-                        ifPasswordWasSent.setValue(false);
                     }
                 });
     }
