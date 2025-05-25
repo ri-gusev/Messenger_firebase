@@ -10,8 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseUser;
+
 
 public class UsersActivity extends AppCompatActivity {
 
@@ -20,6 +22,8 @@ public class UsersActivity extends AppCompatActivity {
     private static final String AGE = "Age";
 
     private UsersViewModel usersViewModel;
+    private RecyclerView recyclerView;
+    private UsersAdapter usersAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,7 @@ public class UsersActivity extends AppCompatActivity {
 
         initViews();
         setObservers();
+        setListeners();
     }
 
     private void setObservers(){
@@ -38,6 +43,15 @@ public class UsersActivity extends AppCompatActivity {
                     startActivity(MainActivity.newIntent(UsersActivity.this));
                     finish();
                 }
+            }
+        });
+    }
+
+    private void setListeners(){
+        usersAdapter.setOnUserClickListener(new UsersAdapter.onUserClickListener() {
+            @Override
+            public void onUserClick() {
+                // Intent to textUserActivity
             }
         });
     }
@@ -61,6 +75,9 @@ public class UsersActivity extends AppCompatActivity {
 
     public void initViews(){
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        usersAdapter = new UsersAdapter();
+        recyclerView = findViewById(R.id.RecyclerViewUsers);
+        recyclerView.setAdapter(usersAdapter);
     }
 
     public static Intent newIntent(Context context){
