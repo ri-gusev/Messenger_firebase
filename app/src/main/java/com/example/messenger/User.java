@@ -16,6 +16,8 @@ public class User {
         this.id = id;
     }
 
+    public User(){}
+
     public String getAge() {
         return age;
     }
@@ -34,5 +36,16 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "age='" + age + '\'' +
+                ", name='" + name + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", isOnline=" + isOnline +
+                ", id='" + id + '\'' +
+                '}';
     }
 }

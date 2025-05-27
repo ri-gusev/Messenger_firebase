@@ -2,7 +2,9 @@ package com.example.messenger;
 
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,14 +14,28 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.List;
+import java.util.Random;
 
 
 public class UsersActivity extends AppCompatActivity {
 
+    private static final String TAG = "UsersActivity";
+
     private static final String NAME = "Name";
     private static final String LASTNAME = "LastName";
     private static final String AGE = "Age";
+
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference dbUser = firebaseDatabase.getReference("User");
 
     private UsersViewModel usersViewModel;
     private RecyclerView recyclerView;
@@ -33,6 +49,13 @@ public class UsersActivity extends AppCompatActivity {
         initViews();
         setObservers();
         setListeners();
+
+//        for (int i = 0; i < 10; i++) {
+//            User user = new User("Name"+i, "LastName"+i,
+//                    "age"+i,new Random().nextBoolean(), ""+i);
+//            dbUser.push().setValue(user);
+//        }
+
     }
 
     private void setObservers(){
@@ -52,6 +75,20 @@ public class UsersActivity extends AppCompatActivity {
             @Override
             public void onUserClick() {
                 // Intent to textUserActivity
+            }
+        });
+
+        dbUser.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    User value = dataSnapshot.getValue(User.class);
+                    Log.d(TAG, value.toString());
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.d(TAG, error.toString());
             }
         });
     }
