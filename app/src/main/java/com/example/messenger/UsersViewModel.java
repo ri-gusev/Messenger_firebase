@@ -7,12 +7,25 @@ import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UsersViewModel extends ViewModel {
 
     private MutableLiveData<FirebaseUser> user = new MutableLiveData<>();
+    private MutableLiveData<String> errorMessage = new MutableLiveData<>();
+    private MutableLiveData<List<User>> userListLV = new MutableLiveData<>();
+
 
     private FirebaseAuth mAuth;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference userDbReference;
 
     public UsersViewModel() {
         mAuth = FirebaseAuth.getInstance();
@@ -22,6 +35,43 @@ public class UsersViewModel extends ViewModel {
                 user.setValue(firebaseAuth.getCurrentUser());
             }
         });
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        userDbReference = firebaseDatabase.getReference("User");
+
+        userDbReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<User> userList = new ArrayList<>();
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser == null){
+                    return;
+                }
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                    User user = dataSnapshot.getValue(User.class);
+                    if (user == null){
+                        return;
+                    }
+                    if (!currentUser.getUid().equals(user.getId())){
+                        userList.add(user);
+                    }
+                }
+                userListLV.setValue(userList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                errorMessage.setValue(error.getMessage());
+            }
+        });
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+
+    public LiveData<List<User>> getUserListLV() {
+        return userListLV;
     }
 
     public LiveData<FirebaseUser> getUser() {
@@ -29,8 +79,7 @@ public class UsersViewModel extends ViewModel {
     }
 
     public void logOut() {
+        userDbReference.child(mAuth.getCurrentUser().getUid()).removeValue();
         mAuth.signOut();
     }
-
-
 }

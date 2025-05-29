@@ -1,13 +1,19 @@
 package com.example.messenger;
 
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 public class RegisterViewModel extends ViewModel {
 
@@ -15,6 +21,8 @@ public class RegisterViewModel extends ViewModel {
     private MutableLiveData<String> errorMessage = new MutableLiveData<>();
 
     private FirebaseAuth mAuth;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference userDbReference;
 
     public RegisterViewModel() {
         mAuth = FirebaseAuth.getInstance();
@@ -26,6 +34,8 @@ public class RegisterViewModel extends ViewModel {
                 }
             }
         });
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        userDbReference = firebaseDatabase.getReference("User");
     }
 
     public LiveData<FirebaseUser> getIsUserCreated() {
@@ -43,6 +53,18 @@ public class RegisterViewModel extends ViewModel {
             String lastName,
             String age) {
         mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        FirebaseUser firebaseUser = authResult.getUser();
+                        if (firebaseUser == null){
+                            return;
+                        }
+                        User user = new User(name, lastName, age,false, firebaseUser.getUid());
+                        userDbReference.child(user.getId()).setValue(user);
+
+                    }
+                })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
