@@ -20,15 +20,13 @@ import java.util.List;
 
 public class UsersActivity extends AppCompatActivity {
 
-    private static final String NAME = "Name";
-    private static final String LASTNAME = "LastName";
-    private static final String AGE = "Age";
-
-
+    private static final String EXTRA_CURRENT_USER_ID = "current_id";
 
     private UsersViewModel usersViewModel;
     private RecyclerView recyclerView;
     private UsersAdapter usersAdapter;
+
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +34,9 @@ public class UsersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_users);
 
         initViews();
+
+        currentUserId = getIntent().getStringExtra(EXTRA_CURRENT_USER_ID);
+
         setObservers();
         setListeners();
     }
@@ -73,8 +74,8 @@ public class UsersActivity extends AppCompatActivity {
     private void setListeners(){
         usersAdapter.setOnUserClickListener(new UsersAdapter.onUserClickListener() {
             @Override
-            public void onUserClick() {
-                // Intent to textUserActivity
+            public void onUserClick(User user) {
+                startActivity(ChatActivity.newIntent(UsersActivity.this, currentUserId, user.getId()));
             }
         });
     }
@@ -103,15 +104,9 @@ public class UsersActivity extends AppCompatActivity {
         recyclerView.setAdapter(usersAdapter);
     }
 
-    public static Intent newIntent(Context context){
-        return new Intent(context, UsersActivity.class);
-    }
-
-    public static Intent newIntent(Context context, String name, String lastName, String age){
+    public static Intent newIntent(Context context, String currentUserId){
         Intent intent = new Intent(context, UsersActivity.class);
-        intent.putExtra(NAME, name);
-        intent.putExtra(LASTNAME, lastName);
-        intent.putExtra(AGE, age);
+        intent.putExtra(EXTRA_CURRENT_USER_ID, currentUserId);
         return intent;
     }
 }

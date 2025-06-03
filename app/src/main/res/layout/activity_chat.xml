@@ -47,8 +47,7 @@
         android:paddingTop="16dp"
         android:paddingEnd="48dp"
         android:paddingBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:text="Long Long Long Long Long Long Long Long Long Long Long Long Long Long Long Long" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <ImageView
         android:id="@+id/imageViewSendMessage"
