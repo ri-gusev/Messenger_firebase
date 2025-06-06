@@ -7,12 +7,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseUser;
@@ -36,24 +39,71 @@ public class ChatActivity extends AppCompatActivity {
     private String currentUserId;
     private String otherUserId;
 
+    private ChatViewModel chatViewModel;
+    private ChatViewModelFactory chatViewModelFactory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
         initViews();
+        chatViewModelFactory = new ChatViewModelFactory(currentUserId, otherUserId);
+        chatViewModel = new ViewModelProvider(this, chatViewModelFactory).get(ChatViewModel.class);
+        setObservers();
+        setListeners();
+    }
 
-        List<Message> messageList = new ArrayList<>();
+    private void setListeners(){
+        imageViewSendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Message message = new Message(
+                        otherUserId,
+                        currentUserId,
+                        editTextSendMessage.getText().toString().trim());
+                chatViewModel.sendMessage(message);
+            }
+        });
+    }
 
-        for (int i = 0; i < 10; i++) {
-            Message message = new Message(otherUserId, currentUserId, "Привет");
-            messageList.add(message);
-        }
-        for (int i = 0; i < 10; i++) {
-            Message message = new Message(currentUserId, otherUserId, "Привет");
-            messageList.add(message);
-        }
-        messagesAdapter.setMessages(messageList);
+    private void setObservers() {
+        chatViewModel.getErrors().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                if (s != null){
+                    Toast.makeText(
+                            ChatActivity.this,
+                            s,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+            }
+        });
+
+        chatViewModel.getIsMessageSent().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean){
+                    editTextSendMessage.setText("");
+                }
+            }
+        });
+
+        chatViewModel.getMessages().observe(this, new Observer<List<Message>>() {
+            @Override
+            public void onChanged(List<Message> messages) {
+                messagesAdapter.setMessages(messages);
+            }
+        });
+
+        chatViewModel.getOtherUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                String userInfo = String.format("%s %s", user.getName(), user.getLastName());
+                textViewUserName.setText(userInfo);
+            }
+        });
     }
 
     private void initViews() {

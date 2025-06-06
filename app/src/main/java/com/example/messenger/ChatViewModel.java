@@ -3,6 +3,7 @@ package com.example.messenger;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -15,7 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatViewModel {
+public class ChatViewModel extends ViewModel {
 
     private MutableLiveData<List<Message>> messages = new MutableLiveData<>();
     private MutableLiveData<String> errors = new MutableLiveData<>();
