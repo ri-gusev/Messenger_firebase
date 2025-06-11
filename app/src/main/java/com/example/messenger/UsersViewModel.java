@@ -89,7 +89,7 @@ public class UsersViewModel extends ViewModel {
     }
 
     public void logOut() {
-        userDbReference.child(mAuth.getCurrentUser().getUid()).removeValue();
+        setUserOnline(false);
         mAuth.signOut();
     }
 }
