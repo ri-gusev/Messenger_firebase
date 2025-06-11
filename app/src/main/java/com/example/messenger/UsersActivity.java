@@ -97,6 +97,18 @@ public class UsersActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        usersViewModel.setUserOnline(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        usersViewModel.setUserOnline(false);
+    }
+
     public void initViews(){
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
         usersAdapter = new UsersAdapter();

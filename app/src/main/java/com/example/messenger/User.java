@@ -5,14 +5,14 @@ public class User {
     private String name;
     private String lastName;
     private String age;
-    private boolean isOnline;
+    private boolean online;
     private String id;
 
     public User(String name, String lastName, String age, boolean isOnline, String id){
         this.name = name;
         this.lastName = lastName;
         this.age = age;
-        this.isOnline = isOnline;
+        this.online = isOnline;
         this.id = id;
     }
 
@@ -27,7 +27,7 @@ public class User {
     }
 
     public boolean isOnline() {
-        return isOnline;
+        return online;
     }
 
     public String getLastName() {
@@ -44,7 +44,7 @@ public class User {
                 "age='" + age + '\'' +
                 ", name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", isOnline=" + isOnline +
+                ", isOnline=" + online +
                 ", id='" + id + '\'' +
                 '}';
     }
